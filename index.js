@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 const { MongoClient } = require("mongodb");
@@ -22,6 +23,7 @@ async function run() {
     const productsCollection = database.collection("products");
     const ordersCollection = database.collection("allorders");
     const usersCollection = database.collection("users");
+    const usersReviewsCollection = database.collection("reviews");
 
     app.post("/products", async (req, res) => {
       const products = req.body;
@@ -135,6 +137,18 @@ async function run() {
       }
       res.json({ admin: isAdmin });
     });
+
+    // post rating
+    app.post('/reviews', async(req, res)=>{
+      const review = req.body;
+      const result = await usersReviewsCollection.insertOne(review);
+      res.json(result);
+    })
+    // post rating
+    app.get('/reviews', async(req, res)=>{
+      const result = await usersReviewsCollection.find({}).toArray();
+      res.json(result);
+    })
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
